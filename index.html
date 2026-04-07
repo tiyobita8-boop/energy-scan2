@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>エネルギー状態スキャンPro</title>
+
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #f5f5f5;
+}
+
+.container {
+  width: 90%;
+  max-width: 600px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+button {
+  font-size: 18px;
+  padding: 12px;
+  margin: 10px;
+  width: 80%;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+}
+
+.bar {
+  height: 20px;
+  background: #ddd;
+  margin: 5px 0;
+  border-radius: 10px;
+}
+
+.fill {
+  height: 100%;
+  background: #4CAF50;
+  border-radius: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🧠 エネルギー状態スキャン Pro</h1>
+<p>感覚を選択（複数OK）</p>
+
+<div class="container">
+
+<div class="card">
+
+<label><input type="checkbox" value="だるい">だるい</label><br>
+<label><input type="checkbox" value="重い">重い</label><br>
+<label><input type="checkbox" value="眠い">眠い</label><br>
+<label><input type="checkbox" value="イライラ">イライラ</label><br>
+<label><input type="checkbox" value="不安">不安</label><br>
+<label><input type="checkbox" value="悲しい">悲しい</label><br>
+<label><input type="checkbox" value="モヤモヤ">モヤモヤ</label><br>
+<label><input type="checkbox" value="焦り">焦り</label><br>
+<label><input type="checkbox" value="無気力">無気力</label><br>
+<label><input type="checkbox" value="混乱">混乱</label><br>
+
+</div>
+
+<button onclick="analyze()">分析する</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+function analyze(){
+
+  const checked = Array.from(document.querySelectorAll('input:checked')).map(el => el.value);
+
+  let chakraScore = {
+    "第1":0,"第2":0,"第3":0,"第4":0,"第5":0,"第6":0,"第7":0
+  };
+
+  let bodyScore = {
+    "エーテル":0,"アストラル":0,"メンタル":0,"コーザル":0
+  };
+
+  let meridianScore = {
+    "肝":0,"腎":0,"肺":0,"胃":0
+  };
+
+  checked.forEach(feel => {
+
+    // 重み付き（ここが重要）
+    if(feel=="だるい"){
+      bodyScore["エーテル"]+=3;
+      chakraScore["第1"]+=2;
+    }
+
+    if(feel=="イライラ"){
+      meridianScore["肝"]+=3;
+      chakraScore["第3"]+=2;
+      bodyScore["アストラル"]+=1;
+    }
+
+    if(feel=="不安"){
+      meridianScore["腎"]+=3;
+      chakraScore["第1"]+=2;
+      bodyScore["アストラル"]+=2;
+    }
+
+    if(feel=="悲しい"){
+      meridianScore["肺"]+=3;
+      chakraScore["第4"]+=2;
+    }
+
+    if(feel=="モヤモヤ"){
+      meridianScore["胃"]+=2;
+      bodyScore["メンタル"]+=3;
+    }
+
+    if(feel=="混乱"){
+      bodyScore["メンタル"]+=2;
+      chakraScore["第6"]+=2;
+      bodyScore["コーザル"]+=1;
+    }
+
+    if(feel=="無気力"){
+      bodyScore["エーテル"]+=2;
+      bodyScore["コーザル"]+=2;
+      chakraScore["第7"]+=2;
+    }
+
+  });
+
+  function renderBars(title, data){
+    let html = `<div class="card"><b>${title}</b><br>`;
+    for(let key in data){
+      let val = data[key];
+      html += `
+      ${key}: ${val}
+      <div class="bar">
+        <div class="fill" style="width:${val*20}px;"></div>
+      </div>
+      `;
+    }
+    html += "</div>";
+    return html;
+  }
+
+  document.getElementById("result").innerHTML =
+    renderBars("チャクラ", chakraScore) +
+    renderBars("エネルギー体", bodyScore) +
+    renderBars("経絡", meridianScore);
+
+}
+
+</script>
+
+</body>
+</html>
